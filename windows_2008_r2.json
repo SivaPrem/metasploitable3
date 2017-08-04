@@ -14,7 +14,7 @@
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
       "guest_os_type": "winServer2008Standard-64",
       "tools_upload_flavor": "windows",
-      "disk_size": 61440,
+      "disk_size": 30000,
       "floppy_files": [
         "{{user `autounattend`}}",
         "./scripts/configs/microsoft-updates.bat",
@@ -50,14 +50,14 @@
       "iso_checksum_type": "{{user `iso_checksum_type`}}",
       "iso_checksum": "{{user `iso_checksum`}}",
       "headless": false,
-      "boot_wait": "10m",
+      "boot_wait": "5m",
       "communicator": "ssh",
       "ssh_username": "vagrant",
       "ssh_password": "vagrant",
       "ssh_wait_timeout": "2h",
       "shutdown_command": "shutdown /s /t 10 /f /d p:4:1 /c \"Packer Shutdown\"",
       "guest_os_type": "Windows2008_64",
-      "disk_size": 61440,
+      "disk_size": 30000,
       "vm_name": "metasploitable3-win2k8",
       "floppy_files": [
         "{{user `autounattend`}}",
@@ -108,23 +108,15 @@
       "destination": "C:/vagrant"
     },
     {
-      "type": "chef-solo",
-      "guest_os_type": "windows",
-      "cookbook_paths": ["chef/cookbooks"],
-      "run_list": [
-        "recipe[metasploitable::root_certs]",
-        "recipe[metasploitable::vagrant_ssh]",
-        "recipe[metasploitable::disable_auto_logon]",
-        "recipe[metasploitable::enable_rdp]"
-      ]
-    },
-    {
       "type": "shell",
       "remote_path": "/tmp/script.bat",
       "execute_command": "{{.Vars}} cmd /c C:/Windows/Temp/script.bat",
       "scripts": [
-        "./scripts/installs/vm-guest-tools.bat",
+        "./scripts/installs/vm-guest-tools.bat"
       ]
+    },
+    {
+      "type": "windows-restart"
     },
     {
       "type":"powershell",
@@ -135,6 +127,18 @@
     },
     {
       "type": "windows-restart"
+    },
+    {
+      "type": "chef-solo",
+      "guest_os_type": "windows",
+      "cookbook_paths": ["chef/cookbooks"],
+      "run_list": [
+        "recipe[metasploitable::root_certs]",
+        "recipe[metasploitable::vagrant_ssh]",
+        "recipe[metasploitable::disable_auto_logon]",
+        "recipe[metasploitable::enable_rdp]"
+      ],
+      "pause_before": "60s"
     },
     {
       "type": "chef-solo",
